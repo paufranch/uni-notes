@@ -1,0 +1,211 @@
+/*
+ * Starlight Visual Customizer
+ * Target: Starlight 0.42.6 (@astrojs/starlight)
+ * Load via the `customCss` option in astro.config.mjs.
+ * Unlayered, deterministic output - only diffs from Starlight's own defaults are emitted.
+ * Made with the Starlight Visual Customizer: https://projects.prisantlabs.com/starlight-visual-customizer/
+ */
+
+@import '@fontsource-variable/figtree';
+@import '@fontsource-variable/manrope';
+
+:root {
+	--sl-color-white: #ffffff;
+	--sl-color-gray-1: #ebeef2;
+	--sl-color-gray-2: #bfc2c7;
+	--sl-color-gray-3: #868c95;
+	--sl-color-gray-4: #535861;
+	--sl-color-gray-5: #333841;
+	--sl-color-gray-6: #22272f;
+	--sl-color-black: #16181c;
+	--sl-color-accent-low: #26222b;
+	--sl-color-accent: #716284;
+	--sl-color-accent-high: #cbc6d2;
+	--sl-font: 'Manrope Variable', var(--sl-font-system);
+	--sl-text-2xs: 0.7969rem;
+	--sl-text-xs: 0.8633rem;
+	--sl-text-sm: 0.9297rem;
+	--sl-text-base: 1.0625rem;
+	--sl-text-lg: 1.1953rem;
+	--sl-text-xl: 1.3281rem;
+	--sl-text-2xl: 1.5938rem;
+	--sl-text-3xl: 1.9258rem;
+	--sl-text-4xl: 2.3242rem;
+	--sl-text-5xl: 2.7891rem;
+	--sl-text-6xl: 4.25rem;
+	--sl-text-h1: 2.3242rem;
+	--sl-text-h2: 1.9258rem;
+	--sl-text-h3: 1.5938rem;
+	--sl-text-h4: 1.3281rem;
+	--sl-text-h5: 1.1953rem;
+	--sl-text-h6: 1.0625rem;
+	--sl-sidebar-width: 17.75rem;
+	--sl-nav-height: 3rem;
+	--sl-content-gap-y: 0.5rem;
+	--sl-shadow-sm: 0px 1px 1px hsla(0, 0%, 0%, 0.06);
+	--sl-shadow-md: 0px 4px 2px hsla(0, 0%, 0%, 0.05), 0px 2px 1px hsla(0, 0%, 0%, 0.06);
+	--sl-shadow-lg: 0px 12px 4px hsla(0, 0%, 0%, 0.04), 0px 6px 3px hsla(0, 0%, 0%, 0.06);
+	--svc-radius: 8px;
+}
+
+@media (min-width: 50em) {
+	:root {
+		--sl-text-h1: 2.7891rem;
+		--sl-text-h2: 2.3242rem;
+		--sl-text-h3: 1.9258rem;
+		--sl-text-h4: 1.5938rem;
+	}
+}
+
+:root[data-theme='light'] {
+	--sl-color-white: #16181c;
+	--sl-color-gray-1: #22272f;
+	--sl-color-gray-2: #333841;
+	--sl-color-gray-3: #535861;
+	--sl-color-gray-4: #868c95;
+	--sl-color-gray-5: #bfc2c7;
+	--sl-color-gray-6: #ebeef2;
+	--sl-color-gray-7: #f5f6f8;
+	--sl-color-black: #ffffff;
+	--sl-color-accent-low: #d9d5de;
+	--sl-color-accent: #736486;
+	--sl-color-accent-high: #352f3e;
+}
+
+.sl-markdown-content :is(h1, h2, h3, h4, h5, h6), h1#_top, .site-title {
+	font-family: 'Figtree Variable', var(--sl-font-system);
+	font-weight: 800;
+}
+
+:root {
+	--ec-brdRad: var(--svc-radius);
+}
+
+.sidebar-content a[aria-current='page'] {
+	border-radius: var(--svc-radius);
+}
+
+@media (min-width: 50rem) {
+	button[data-open-modal] {
+		border-radius: var(--svc-radius);
+	}
+}
+
+.pagination-links a {
+	border-radius: var(--svc-radius);
+}
+
+mobile-starlight-toc .toggle {
+	border-radius: var(--svc-radius);
+}
+
+.starlight-aside {
+	border-radius: var(--svc-radius);
+}
+
+@media (min-width: 50rem) {
+	button[data-open-modal] {
+		max-width: 16rem;
+	}
+}
+
+.sidebar-content a:hover:not([aria-current='page']),
+.sidebar-content a:focus:not([aria-current='page']) {
+	background-color: var(--sl-color-gray-5);
+	border-radius: var(--svc-radius, 0.25rem);
+}
+
+:root {
+	--ec-codeFontSize: 0.9375rem;
+}
+
+header.header {
+	background-color: color-mix(in srgb, var(--sl-color-bg-nav) 70%, transparent);
+	backdrop-filter: blur(0.5rem);
+	-webkit-backdrop-filter: blur(0.5rem);
+}
+
+@media (min-width: 50rem) {
+	button[data-open-modal] {
+		border: none;
+		border-bottom: 1px solid var(--sl-color-gray-5);
+		border-radius: 0;
+		background-color: transparent;
+	}
+}
+
+@media (min-width: 50rem) {
+	.header > div:has(> site-search) {
+		justify-content: center;
+	}
+}
+
+.sidebar-content a[aria-current='page'],
+.sidebar-content a[aria-current='page']:hover,
+.sidebar-content a[aria-current='page']:focus {
+	background-color: var(--sl-color-accent-low);
+	color: var(--sl-color-text-accent);
+	border-radius: var(--svc-radius, 0.25rem);
+}
+
+starlight-toc a[aria-current='true'] {
+	position: relative;
+	padding-inline-start: calc(1rem * var(--depth, 0) + 1.25rem);
+}
+starlight-toc a[aria-current='true']::before {
+	content: '';
+	position: absolute;
+	inset-inline-start: calc(1rem * var(--depth, 0) + 0.35rem);
+	top: 50%;
+	transform: translateY(-50%);
+	width: 0.35rem;
+	height: 0.35rem;
+	border-radius: 50%;
+	background-color: var(--sl-color-text-accent);
+}
+
+@media (min-width: 72rem) {
+	.main-pane {
+		--sl-content-margin-inline: 0 auto;
+	}
+}
+
+.starlight-aside {
+	border-inline-start-width: 0;
+	border-radius: var(--svc-radius, 0.5rem);
+}
+
+.sl-markdown-content code:not(:where(.not-content *)):not(pre code) {
+	border-radius: var(--svc-radius, 0.25rem);
+}
+
+starlight-tabs [role='tablist'] {
+	border-bottom: none;
+	gap: 0.25rem;
+}
+starlight-tabs .tab > [role='tab'] {
+	box-shadow: none;
+	border-radius: 999px;
+	background-color: var(--sl-color-gray-6);
+}
+starlight-tabs .tab > [role='tab'][aria-selected='true'] {
+	background-color: var(--sl-color-accent);
+	color: var(--sl-color-text-invert);
+}
+
+.sl-markdown-content blockquote:not(:where(.not-content *)) {
+	background-color: var(--sl-color-gray-6);
+	border-inline-start: none;
+	padding: 0.75rem 1rem;
+	border-radius: var(--svc-radius, 0.35rem);
+}
+
+article.card {
+	border-color: transparent;
+	box-shadow: var(--sl-shadow-md);
+	border-radius: var(--svc-radius, 0.5rem);
+}
+
+.sl-badge {
+	border-radius: 999px;
+}

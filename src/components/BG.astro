@@ -1,0 +1,123 @@
+---
+// src/components/BG.astro
+---
+
+<canvas id="bg-canvas"></canvas>
+
+<style>
+  #bg-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -1; /* Se sitúa detrás del contenido */
+    pointer-events: none; /* Permite hacer clic en enlaces y botones de Starlight */
+    display: block;
+  }
+</style>
+
+<script>
+  const canvas = document.getElementById('bg-canvas') as HTMLCanvasElement;
+  const ctx = canvas.getContext('2d')!;
+
+  let width = (canvas.width = window.innerWidth);
+  let height = (canvas.height = window.innerHeight);
+
+  // Redimensionar si cambia el tamaño de la ventana
+  window.addEventListener('resize', () => {
+    width = canvas.width = window.innerWidth;
+    height = canvas.height = window.innerHeight;
+  });
+
+  // Generar puntos para un efecto de constelación/red tenue
+  const numPuntos = 30;
+  let puntos = Array.from({ length: numPuntos }, () => ({
+    x: 0,
+    y: 0,
+    prevx: 0,
+    prevy: 0,
+    vx: 0,
+    vy: 0,
+    radius: Math.random() * 2 + 1,
+  }));
+
+  const G = 400;
+  const numConstraints = 5;
+  let lastTime = 0;
+
+  function init()
+  {
+    for(let i = 0; i < numPuntos; i++)
+    {
+        puntos[i].y = 0;
+        puntos[i].x = width / 2 + height / 45 * i;
+        puntos[i].prevy = 0;
+        puntos[i].prevx = width / 2 + height / 45 * i;
+    }
+  }
+
+  function run(currentTime: number)
+  {
+    if (!lastTime) lastTime = currentTime;
+    let dt = (currentTime - lastTime) / 1000;
+    lastTime = currentTime;
+    if (dt > 0.1) dt = 0.1;
+
+    // verlet integration
+    for(let i = 1; i < numPuntos; i++)
+    {
+        const { x, y, prevx, prevy } = puntos[i];
+        puntos[i].x = 2 * x - prevx;
+        puntos[i].y = 2 * y - prevy + G * dt * dt;
+        puntos[i].prevx = x;
+        puntos[i].prevy = y;
+    }
+
+    //constraints
+    for(let j = 0; j < numConstraints; j++)
+    {
+        puntos[0].x = width/2;
+        puntos[0].y = 0;
+        for(let i = 0; i < numPuntos-1; i++)
+        {
+            var n1 = puntos[i];
+            var n2 = puntos[i+1];
+            var d = Math.hypot(n1.x - n2.x, n1.y - n2.y);
+            var c = (d - height/45) / d;
+            puntos[i].x -= (n1.x - n2.x) * 0.5 * c;
+            puntos[i].y -= (n1.y - n2.y) * 0.5 * c;
+            puntos[i+1].x += (n1.x - n2.x) * 0.5 * c;
+            puntos[i+1].y += (n1.y - n2.y) * 0.5 * c;
+        }
+    }
+
+    ctx.clearRect(0, 0, width, height);
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+    for(let i = 0; i < numPuntos; i++)
+    {
+        const p1 = puntos[i];
+        ctx.beginPath();
+        ctx.arc(p1.x, p1.y, p1.radius, 0, Math.PI * 2);
+        ctx.fill();
+
+        if (i + 1 < numPuntos) {
+          const p2 = puntos[i + 1];
+          ctx.beginPath();
+          ctx.arc(p2.x, p2.y, p2.radius, 0, Math.PI * 2);
+          ctx.fill();
+
+          ctx.beginPath();
+          ctx.moveTo(p1.x, p1.y);
+          ctx.lineTo(p2.x, p2.y);
+          ctx.stroke();
+        }
+    }
+
+    requestAnimationFrame(run);
+  }
+
+  init();
+  requestAnimationFrame(run);
+</script>
