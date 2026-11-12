@@ -10,9 +10,11 @@ import rehypeKatex from 'rehype-katex';
 export default defineConfig({
     integrations: [
         starlight({
-            title: 'My Notes',
+            title: 'Notas de Pau 📘',
             pagination: false,
-            customCss: ['katex/dist/katex.min.css', './src/styles/theme.css'],
+            customCss: [
+                './src/styles/theme.css',
+            ],
             social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/withastro/starlight' }],
 		}), react()],
     

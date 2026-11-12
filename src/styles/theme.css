@@ -5,7 +5,8 @@
  * Unlayered, deterministic output - only diffs from Starlight's own defaults are emitted.
  * Made with the Starlight Visual Customizer: https://projects.prisantlabs.com/starlight-visual-customizer/
  */
-
+ 
+@import 'katex/dist/katex.min.css';
 @import '@fontsource-variable/figtree';
 @import '@fontsource-variable/manrope';
 

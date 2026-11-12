@@ -50,10 +50,10 @@
   {
     for(let i = 0; i < numPuntos; i++)
     {
-        puntos[i].y = 0;
-        puntos[i].x = width / 2 + height / 45 * i;
-        puntos[i].prevy = 0;
-        puntos[i].prevx = width / 2 + height / 45 * i;
+      puntos[i].y = 0;
+      puntos[i].x = width / 2 + height / 45 * i;
+      puntos[i].prevy = 0;
+      puntos[i].prevx = width / 2 + height / 45 * i;
     }
   }
 
@@ -67,29 +67,29 @@
     // verlet integration
     for(let i = 1; i < numPuntos; i++)
     {
-        const { x, y, prevx, prevy } = puntos[i];
-        puntos[i].x = 2 * x - prevx;
-        puntos[i].y = 2 * y - prevy + G * dt * dt;
-        puntos[i].prevx = x;
-        puntos[i].prevy = y;
+      const { x, y, prevx, prevy } = puntos[i];
+      puntos[i].x = 2 * x - prevx;
+      puntos[i].y = 2 * y - prevy + G * dt * dt;
+      puntos[i].prevx = x;
+      puntos[i].prevy = y;
     }
 
     //constraints
     for(let j = 0; j < numConstraints; j++)
     {
-        puntos[0].x = width/2;
-        puntos[0].y = 0;
-        for(let i = 0; i < numPuntos-1; i++)
-        {
-            var n1 = puntos[i];
-            var n2 = puntos[i+1];
-            var d = Math.hypot(n1.x - n2.x, n1.y - n2.y);
-            var c = (d - height/45) / d;
-            puntos[i].x -= (n1.x - n2.x) * 0.5 * c;
-            puntos[i].y -= (n1.y - n2.y) * 0.5 * c;
-            puntos[i+1].x += (n1.x - n2.x) * 0.5 * c;
-            puntos[i+1].y += (n1.y - n2.y) * 0.5 * c;
-        }
+      puntos[0].x = width/2;
+      puntos[0].y = 0;
+      for(let i = 0; i < numPuntos-1; i++)
+      {
+        var n1 = puntos[i];
+        var n2 = puntos[i+1];
+        var d = Math.hypot(n1.x - n2.x, n1.y - n2.y);
+        var c = (d - height/45) / d;
+        puntos[i].x -= (n1.x - n2.x) * 0.5 * c;
+        puntos[i].y -= (n1.y - n2.y) * 0.5 * c;
+        puntos[i+1].x += (n1.x - n2.x) * 0.5 * c;
+        puntos[i+1].y += (n1.y - n2.y) * 0.5 * c;
+      }
     }
 
     ctx.clearRect(0, 0, width, height);

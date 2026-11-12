@@ -1,0 +1,44 @@
+---
+title: Problema 3-12.b
+description: Problema sobre clasificacion de lenguajes computables.
+tableOfContents: false
+---
+
+import Demostracion from '../../../../components/demostracion.astro'
+
+### Para un numero $p$, definimos $\mathcal{L}_p = \{ x \mid M_p(x)\downarrow \text{i acepta} \}$. Para cada uno de los lenguajes $L$ siguientes, decidir si $L \in R$, $L \in \text{RE} \setminus R$, $L \in \text{coRE} \setminus R$ o $L \notin \text{RE } \cup \text{ coRE}$
+#### b. $\{ p \mid \mathcal{L}_p \text{ es infinito}\}$
+
+Respuesta: $L \notin \text{RE } \cup \text{ coRE}$
+
+**El lenguaje $\mathcal{L}_p$ es el conjunto de todas las cadenas de entrada $x$ para las cuales la maquina de Turing $M_p$ se detiene en un tiempo finito y acepta la entrada.**
+
+En este caso, estamos tratando con el lenguaje $\{ p \mid \mathcal{L}_p \text{ es infinito}\}$, por lo tanto, un conjunto de cadenas de entrada para las cuales la maquina de Turing se detiene y acepta la entrada, siendo este conjunto infinito.
+
+Un lenguaje $L$ cualquiera pertenece a $R$ si y solo si existe una maquina Turing $M$ tal que para cualquier palabra:
+- si $\omega \in L$, $M(x)\downarrow$ y acepta;
+- si $\omega \notin L$, $M(x)\downarrow$ y no acepta.
+Es decir $L$ es decidible si existe una maquina capaz de determinar si una palabra cualquiera es o no del lenguaje sin colgarse.
+
+Por otro lado, un lenguaje $L$ pertenece a RE si y solo si existe una maquina Turing $M$ tal que para cualquier palabra:
+- si $\omega \in L$, $M(x)\downarrow$ y acepta;
+- si $\omega \notin L$, $M(x)\downarrow$ y no acepta o $M(x)\uparrow$.
+Es decir $L$ es semidecidible si existe una maquina capaz de determinar si una palabra cualquiera es del lenguaje, y si no lo es o bien la rechaza o se cuelga.
+
+Por ultimo, un lenguaje pertenece a coRE si y solo si existe una maquina Turing $M$ tal que para cualquier palabra:
+- si $\omega \in L$, $M(x)\downarrow$ y no acepta o $M(x)\uparrow$.
+- si $\omega \notin L$, $M(x)\downarrow$ y acepta;
+
+Entonces, en el caso del ejercicio, $L$ es decidible si y solo si existe una maquina Turing que, para cualquier codigo $p$ de entrada:
+- si $p$ acepta infinitas palabras distintas, esta maquina se detiene y acepta.
+- si $p$ acepta solo una cantidad finita de palabras, la maquina se detiene y rechaza.
+
+Supongamos que existe una super maquina Turing que es capaz de determinar el problema descrito. Supongamos tambien un programa M' que al recibir una entrada, la ignora y simula la ejecucion de otro programa M(w) con una entrada arbitraria w y, si M(w) termina, entonces acepta x.
+
+El programa M' tiene el comportamiento, para cualquier entrada, segun el cual acepta infinitas entradas posibles si M(w) se detiene pero no acepta ninguna palabra si M(w) nunca se detiene, i al no aceptar ninguna palabra, el lenguaje es vacio, por lo que es finito.
+
+Si ahora le pasaramos el codigo M' a la super maquina Turing, el hecho de determinar si el lenguaje de M' es infinito o finito corresponde a conocer si M(w) se detiene o no se detiene. Con lo cual, la super maquina Turing tambien seria capaz de decidir el problema de la parada. Como el problema de la parada es un conocido problema indecidible, por reduccion al absurdo la conclusion es que determinar si L es infinito o no tambien es indecidible, por lo tanto, $L \notin R$.
+
+Miremos ahora si L pertenece a RE o coRE. Para esto no nos sirve la estrategia anterior ya que el problema de la parada si pertenece a RE y su complemento a coRE. Sin embargo, existe una inconsistencia logica por la que L no es ni semidecidible ni su complemento ya que, para que la super maquina Turing pudiera determinar, para un lenguaje infinito, si es efectivamente infinito, tendria que comprovar todas las entradas posibles sobre $M_p$, de modo que le tomaria un tiempo infinito llegar a determinar con certeza que el lenguaje no es finito. Del mismo modo, tampoco se puede determinar en un tiempo finito que un lenguaje es finito ya que siempre existiran infinitas entradas a evaluar que podrian ser aceptadas por $M_p$.
+
+Por lo tanto, queda demostrado que $L \notin \text{RE } \cup \text{ coRE}$
