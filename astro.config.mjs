@@ -15,7 +15,7 @@ export default defineConfig({
             customCss: [
                 './src/styles/theme.css',
             ],
-            social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/withastro/starlight' }],
+            social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/paufranch' }],
 		}), react()],
     
     markdown: {

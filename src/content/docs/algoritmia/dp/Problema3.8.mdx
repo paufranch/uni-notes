@@ -1,0 +1,76 @@
+---
+title: Problema 3.8
+description: Problema de programacion dinamica.
+tableOfContents: false
+---
+
+#### (El joc dels pots d’or) 
+
+**Dos jugadors estan jugant al joc dels pots d’or. En aquest joc hi
+han pots d’or disposats en línia, &#123;p1,...,pn&#125;, i cada pot $p_i$ conté una determinada quantitat
+$c_i > 0$ de monedes d’or. Els jugadors juguen de manera alternada i, a cada torn, el jugador
+que té el torn pot escollir un pot d’un dels extrems de la línia que hi hagi en aquell moment.
+Per exemple, el jugador que comença el joc pot escollir quedar-se amb el pot $p_1$ o amb el
+pot $p_n$. Si decideix quedar-se amb $p_1$, aleshores l’altre jugador podrà escollir entre $p_2$ i $p_n$ al
+següent torn; en canvi, si el primer jugador escull $p_n$, l’altre jugador haurà de triar entre $p_1$ i
+$p_n-1$.
+El guanyador és el jugador que, una vegada no quedin pots per agafar, tingui una quantitat
+més gran de monedes.
+Dissenyeu un algorisme eficient per calcular quin és el nombre màxim de monedes que podria
+obtenir en aquest joc el jugador que comença primer, suposant que els dos jugadors volen
+guanyar i, per tant, ambdós juguen de manera intel.ligent per tal d’obtenir el màxim nombre
+possible de monedes. Doneu també la seqüència de pots que hauria d’anar escollint a cada
+torn per aconseguir aquesta quantitat.**
+
+**Paso 1** Subestructura Optima
+
+Si tenemos una lista de botes $P_i$ ... $P_j$, al escoger siempre nos quedara o bien:
+- $P_\text{i+1}$ ... $P_j$
+- $P_i$ ... $P_\text{j-1}$
+
+**Paso 2** Definicion Subproblemas
+
+Sea $\text{OR}(i,j) =$ El maximo valor que puede obtener el jugador 1 cuando le toca turno con los potes del $i$ al $j$
+
+**Paso 3** Recursion
+
+:::note
+**CASO BASE**
+
+$\text{OR}(i,i) = C_i$
+:::
+
+:::note
+**CASO GENERAL**
+
+$\text{OR}(i,j) = \text{max}(C_i + A, C_j + B)$
+:::
+
+Al escoger nosotros $C_i$, el contrincante podria escoger $C_\text{i+1}$ o $C_j$, por lo cual, escogera:
+
+A: $$\text{min} \{ \text{OR}(i+1, j-1), \text{OR}(i+2, j) \}$$
+
+Al escoger nosotros $C_j$, el contrincante podria escoger $C_i$ o $C_\text{j-1}$, por lo cual, escogera:
+
+B: $$\text{min} \{ \text{OR}(i, j-2), \text{OR}(i+1, j-1) \}$$
+
+**Paso 4** Resultados intermedios
+
+| OR | 1 | 2 | ... | n |
+|----|---|---|-----|---|
+| 1 | c1 | x | x | !OR(1,n)! |
+| 2 |  | c2 | x | x |
+| ... | | | Cij | x |
+| n | | | | Cn |
+
+En un paso cualquiera, siendo M la tabla anterior, rellenamos la tabla M(i,j) con el maximo entre (Ci + el minimo entre M(i+1,j-1), M(i+2,j)) i (Cj + el minimo entre M(i,j-2), M(i+1,j-1))
+
+Si en algun caso consultamos M(x,y) donde y < x, entonces devolvemos 0. Representa cuando no quedan elecciones posibles.
+
+**Paso 5** Coste
+
+El coste de rellenar la tabla es O(n^2/2) que es equivalente a O(n^2).
+
+**Paso 6** Reconstruir la solucion
+
+Puede hacerse en tiempo lineal si recordamos la eleccion escogida en cada paso de la tabla hasta llegar a OR(1,n).

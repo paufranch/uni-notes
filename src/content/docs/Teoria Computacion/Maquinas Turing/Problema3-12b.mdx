@@ -1,10 +1,8 @@
 ---
-title: Problema 3-12.b
+title: Problema 3-12
 description: Problema sobre clasificacion de lenguajes computables.
 tableOfContents: false
 ---
-
-import Demostracion from '../../../../components/demostracion.astro'
 
 ### Para un numero $p$, definimos $\mathcal{L}_p = \{ x \mid M_p(x)\downarrow \text{i acepta} \}$. Para cada uno de los lenguajes $L$ siguientes, decidir si $L \in R$, $L \in \text{RE} \setminus R$, $L \in \text{coRE} \setminus R$ o $L \notin \text{RE } \cup \text{ coRE}$
 #### b. $\{ p \mid \mathcal{L}_p \text{ es infinito}\}$
@@ -42,3 +40,20 @@ Si ahora le pasaramos el codigo M' a la super maquina Turing, el hecho de determ
 Miremos ahora si L pertenece a RE o coRE. Para esto no nos sirve la estrategia anterior ya que el problema de la parada si pertenece a RE y su complemento a coRE. Sin embargo, existe una inconsistencia logica por la que L no es ni semidecidible ni su complemento ya que, para que la super maquina Turing pudiera determinar, para un lenguaje infinito, si es efectivamente infinito, tendria que comprovar todas las entradas posibles sobre $M_p$, de modo que le tomaria un tiempo infinito llegar a determinar con certeza que el lenguaje no es finito. Del mismo modo, tampoco se puede determinar en un tiempo finito que un lenguaje es finito ya que siempre existiran infinitas entradas a evaluar que podrian ser aceptadas por $M_p$.
 
 Por lo tanto, queda demostrado que $L \notin \text{RE } \cup \text{ coRE}$
+
+
+#### a. $\{ p \mid \mathcal{L}_p \text{ es finito}\}$
+
+Veamos que $L \notin \text{ RE}$
+
+Por reduccion al absurdo, suponemos que $L \in \text{ RE} \implies \exists M : \forall \omega \in \Sigma^*$ tal que o si $\omega \in L$, $M(\omega)\downarrow \text{ y acepta}$ y si $\omega \notin L$, $M(\omega)\downarrow \text{ y no acepta o } M(\omega)\uparrow$
+
+Dado el codigo $x$, definimos $M_x'(\omega)$ = ejecutar $M_x(x)$; aceptar $\omega$.
+
+Sea $g(x)$ el codigo de $M_x'(\omega)$, el lenguaje asociado a $M_x'(\omega)$ es vacio si $M_x(x)\uparrow$; o $\Sigma^*$ si $M_x(x)\downarrow$.
+
+Como que el lenguaje asociado $L_\text{g(x)} = \emptyset$ o $L_\text{g(x)} = \Sigma^*$ y solo el conjunto $\emptyset$ es finito:
+
+$$L_\text{g(x)} \text{ es finito} \iff x \notin K$$
+
+Reconocer si $x \notin K$ es el complementario de $K$, que no esta en $\text{RE}$, por lo tanto, $L \notin \text{ RE}$
