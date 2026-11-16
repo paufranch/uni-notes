@@ -15,6 +15,9 @@ export default defineConfig({
             customCss: [
                 './src/styles/theme.css',
             ],
+            components: {
+                Hero: './src/components/HomeHero.astro',
+            },
             social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/paufranch' }],
 		}), react()],
     

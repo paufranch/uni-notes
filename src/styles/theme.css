@@ -9,6 +9,7 @@
 @import 'katex/dist/katex.min.css';
 @import '@fontsource-variable/figtree';
 @import '@fontsource-variable/manrope';
+@import '@fontsource/special-elite';
 
 :root {
 	--sl-color-white: #ffffff;
@@ -121,9 +122,10 @@ mobile-starlight-toc .toggle {
 }
 
 header.header {
-	background-color: color-mix(in srgb, var(--sl-color-bg-nav) 70%, transparent);
-	backdrop-filter: blur(0.5rem);
-	-webkit-backdrop-filter: blur(0.5rem);
+	background-color: var(--sl-color-bg);
+	backdrop-filter: blur(10px);
+	-webkit-backdrop-filter: blur(10px);
+	border-bottom-color: transparent;
 }
 
 @media (min-width: 50rem) {
@@ -209,4 +211,19 @@ article.card {
 
 .sl-badge {
 	border-radius: 999px;
+}
+
+@media (min-width: 50rem) {
+  .page > header.header > .header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12vw;
+  }
+}
+
+@media (min-width: 72rem) {
+  html[data-has-hero] .main-pane {
+    --sl-content-margin-inline: auto;
+  }
 }

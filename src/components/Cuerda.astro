@@ -1,0 +1,177 @@
+---
+interface Props {
+  width?: number;
+  height?: number;
+  class?: string;
+  style?: string;
+}
+
+const { width = 300, height = 190, class: className, style } = Astro.props;
+---
+
+<div
+  class:list={['rope-widget', className]}
+  style={`--rope-width: ${width}px; --rope-height: ${height}px; ${style ?? ''}`}
+>
+  <canvas></canvas>
+</div>
+
+<style>
+  .rope-widget {
+    display: block;
+    width: var(--rope-width);
+    height: var(--rope-height);
+    pointer-events: none;
+    --rope-dot: #fff3cc;
+    --rope-line: color-mix(in srgb, var(--sl-color-accent) 65%, transparent);
+  }
+
+  canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+</style>
+
+<script>
+  type Particle = {
+    x: number;
+    y: number;
+    previousX: number;
+    previousY: number;
+    radius: number;
+  };
+
+  const activeWidgets = new WeakMap<HTMLElement, () => void>();
+
+  function drawWidget(widget: HTMLElement) {
+    const canvas = widget.querySelector('canvas');
+    const context = canvas?.getContext('2d');
+    if (!canvas || !context) throw new Error('No se pudo inicializar la simulación de la cuerda.');
+
+    const particleCount = 30;
+    const particles: Particle[] = Array.from({ length: particleCount }, () => ({
+      x: 0,
+      y: 0,
+      previousX: 0,
+      previousY: 0,
+      radius: Math.random() * 1.3 + 1,
+    }));
+
+    let width = 0;
+    let height = 0;
+    let segmentLength = 0;
+    let frame = 0;
+    let lastTime = 0;
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    function resize() {
+      const bounds = widget.getBoundingClientRect();
+      const scale = Math.min(window.devicePixelRatio || 1, 2);
+      width = bounds.width;
+      height = bounds.height;
+      canvas.width = Math.round(width * scale);
+      canvas.height = Math.round(height * scale);
+      context.setTransform(scale, 0, 0, scale, 0, 0);
+      segmentLength = (width * 0.75) / (particleCount - 1);
+
+      particles.forEach((particle, index) => {
+        const progress = index / (particleCount - 1);
+        particle.x = width * 0.1 + segmentLength * index;
+        particle.y = height * 0.28 * Math.sin(Math.PI * progress);
+        particle.previousX = particle.x;
+        particle.previousY = particle.y;
+      });
+
+      if (reducedMotion) paint();
+    }
+
+    function paint() {
+      context.clearRect(0, 0, width, height);
+      context.fillStyle = getComputedStyle(widget).getPropertyValue('--rope-dot');
+      context.strokeStyle = getComputedStyle(widget).getPropertyValue('--rope-line');
+      context.lineWidth = 1.5;
+
+      context.beginPath();
+      particles.forEach((particle, index) => {
+        if (index === 0) context.moveTo(particle.x, particle.y);
+        else context.lineTo(particle.x, particle.y);
+      });
+      context.stroke();
+
+      particles.forEach((particle) => {
+        context.beginPath();
+        context.arc(particle.x, particle.y, particle.radius, 0, Math.PI * 2);
+        context.fill();
+      });
+    }
+
+    function animate(time: number) {
+      if (!lastTime) lastTime = time;
+      const delta = Math.min((time - lastTime) / 1000, 0.05);
+      lastTime = time;
+
+      for (let index = 1; index < particleCount; index++) {
+        const particle = particles[index];
+        const x = particle.x;
+        const y = particle.y;
+        particle.x = 2 * x - particle.previousX;
+        particle.y = 2 * y - particle.previousY + 420 * delta * delta;
+        particle.previousX = x;
+        particle.previousY = y;
+      }
+
+      for (let iteration = 0; iteration < 6; iteration++) {
+        particles[0].x = width * 0.1;
+        particles[0].y = 0;
+
+        for (let index = 0; index < particleCount - 1; index++) {
+          const first = particles[index];
+          const second = particles[index + 1];
+          const dx = first.x - second.x;
+          const dy = first.y - second.y;
+          const distance = Math.hypot(dx, dy);
+          if (distance === 0) continue;
+
+          const correction = (distance - segmentLength) / distance;
+          first.x -= dx * correction * 0.5;
+          first.y -= dy * correction * 0.5;
+          second.x += dx * correction * 0.5;
+          second.y += dy * correction * 0.5;
+        }
+      }
+
+      particles[0].x = width * 0.1;
+      particles[0].y = 0;
+      paint();
+      frame = requestAnimationFrame(animate);
+    }
+
+    const observer = new ResizeObserver(resize);
+    observer.observe(widget);
+    resize();
+    if (!reducedMotion) frame = requestAnimationFrame(animate);
+
+    return () => {
+      cancelAnimationFrame(frame);
+      observer.disconnect();
+    };
+  }
+
+  function mountWidgets() {
+    document.querySelectorAll<HTMLElement>('.rope-widget').forEach((widget) => {
+      if (!activeWidgets.has(widget)) activeWidgets.set(widget, drawWidget(widget));
+    });
+  }
+
+  function unmountWidgets() {
+    document.querySelectorAll<HTMLElement>('.rope-widget').forEach((widget) => {
+      activeWidgets.get(widget)?.();
+      activeWidgets.delete(widget);
+    });
+  }
+
+  mountWidgets();
+  document.addEventListener('astro:page-load', mountWidgets);
+  document.addEventListener('astro:before-swap', unmountWidgets);
+</script>

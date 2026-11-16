@@ -1,0 +1,129 @@
+---
+import Cuerda from './Cuerda.astro';
+
+const { data } = Astro.locals.starlightRoute.entry;
+const { title = data.title, tagline, actions = [] } = data.hero || {};
+---
+
+<section class="home-window" aria-labelledby="_top">
+  <div class="home-copy">
+    <h1 data-page-title>{title}</h1>
+  </div>
+
+  <div class="home-visual" aria-hidden="true">
+    <div class="visual-caption">SIMULACIÓN / 001</div>
+    <Cuerda class="home-rope" width={310} height={190} />
+  </div>
+</section>
+
+<script>
+  const heading = document.querySelector<HTMLHeadingElement>('.home-copy h1');
+
+  if (heading) {
+    const characters = Array.from(heading.textContent ?? '');
+    const lowercaseLetters = characters
+      .map((character, index) => ({ character, index }))
+      .filter(({ character }) =>
+        character === character.toLocaleLowerCase('es') &&
+        character !== character.toLocaleUpperCase('es')
+      );
+
+    const randomDelay = (min: number, max: number) => min + Math.random() * (max - min);
+
+    function flicker()
+    {
+      if(!heading?.isConnected || lowercaseLetters.length === 0) return;
+
+      const selected = lowercaseLetters[Math.floor(Math.random() * lowercaseLetters.length)];
+      characters[selected.index] = selected.character.toLocaleUpperCase('es');
+      heading.textContent = characters.join('');
+
+      window.setTimeout(() => {
+        characters[selected.index] = selected.character;
+        heading.textContent = characters.join('');
+
+        window.setTimeout(flicker, randomDelay(100, 450));
+      }, randomDelay(150, 250));
+    }
+
+    window.setTimeout(flicker, randomDelay(100, 450));
+  }
+</script>
+
+<style>
+  .home-window {
+    --window-ink: #4b426d;
+    --window-violet: #7862a0;
+    --window-cyan: #3b9298;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    border: 2px solid var(--window-ink);
+    background: var(--sl-color-bg);
+  }
+
+  .home-copy {
+    font-family: 'Special Elite', 'Courier New', monospace;
+    width: min(100%, 58rem);
+    padding: clamp(1.5rem, 5vw, 3.5rem);
+  }
+
+  h1 {
+    margin: 0 auto;
+    text-align: center;
+    width: min(100%, 44rem);
+    color: var(--sl-color-text);
+    font-size: clamp(0.75rem, 3vw, 4rem);
+    font-weight: 600;
+    line-height: 0.98;
+  }
+
+  .home-tagline {
+    margin-inline: auto;
+    color: var(--sl-color-text);
+  }
+
+  .home-visual {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 100%;
+    min-height: 30rem;
+    margin-inline: auto;
+    border: 0;
+    background:
+      radial-gradient(circle at 1px 1px, color-mix(in srgb, var(--sl-color-accent) 32%, transparent) 1px, transparent 0) 0 0 / 14px 14px,
+      color-mix(in srgb, var(--sl-color-bg) 90%, var(--sl-color-accent));
+  }
+
+  .visual-caption {
+    position: absolute;
+    top: 0.8rem;
+    left: 1rem;
+    color: var(--sl-color-gray-3);
+    font: 700 0.65rem/1.4 'Manrope Variable', sans-serif;
+    letter-spacing: 0.1em;
+  }
+
+  .home-rope {
+    width: min(100% - 1.5rem, 19rem);
+    height: 12rem;
+  }
+
+  @media (max-width: 50rem) {
+    .home-window {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .home-copy {
+      padding: 1.5rem;
+    }
+
+    .home-visual {
+      min-height: 12rem;
+      border-top: 2px solid var(--window-ink);
+      border-left: 0;
+    }
+  }
+</style>
