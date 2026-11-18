@@ -20,6 +20,7 @@ export function* knapsack({ weights, values, W })
     yield {
         P: snapshot(),
         active: {type: 'row', i: 0},
+        weight: null,
         message: 'Inicializamos la tabla con los casos base.'
     };
 
@@ -35,6 +36,7 @@ export function* knapsack({ weights, values, W })
                 yield {
                     P: snapshot(),
                     active: {type: 'cell',i,x},
+                    weight: i-1,
                     message: `Calculamos P[${i}, ${x}]. Como w[i]=${weight} > x=${x}, nos quedamos con la fila anterior P[i-1][x].`
                 };
             }
@@ -46,6 +48,7 @@ export function* knapsack({ weights, values, W })
                 yield {
                     P: snapshot(),
                     active: {type: 'cell',i,x},
+                    weight: i-1,
                     message: `Calculamos P[${i}, ${x}]. Como w[i]=${weight} ≤ x=${x}, cogemos el maximo entre P[i-1][x] y P[i-1][x-wi] + v[i-1], en este caso: ${Math.max(skip, take)}.`
                 };
             }
@@ -55,6 +58,7 @@ export function* knapsack({ weights, values, W })
     yield {
         P: snapshot(),
         active: {type: 'cell', i:n, x:W},
+        weight: null,
         message: `Valor optimo encontrado: ${P[n][W]}`
     };
 }
