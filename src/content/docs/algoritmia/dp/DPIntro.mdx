@@ -1,0 +1,124 @@
+---
+title: Programacion Dinamica
+description: Introduccion a los algoritmos de programacion dinamica
+---
+
+La programación dinámica es una técnica para resolver problemas dividiéndolos en subproblemas más pequeños. Cuando un mismo subproblema aparece varias veces, se guarda su resultado y se reutiliza, evitando repetir cálculos. Se puede aplicar guardando resultados durante la recursión (memoización) o calculándolos de forma iterativa (tabulación).
+
+| Memoización | Tabulación |
+|-------------|------------|
+|Enfoque top-down: parte del problema original y lo divide recursivamente. | Enfoque bottom-up: resuelve primero los subproblemas más pequeños y avanza hacia el problema original. |
+|Guarda el resultado de cada subproblema cuando lo calcula. | Guarda los resultados en una tabla, normalmente rellenándola de forma iterativa. |
+|Calcula solo los subproblemas que necesita. | Puede calcular subproblemas que finalmente no se necesiten. |
+|Suele ser más intuitiva si ya existe una solución recursiva. | Evita la recursión y su sobrecoste; puede usar menos memoria si solo conserva resultados recientes. |
+
+### Ejemplo 01: 0-1 Knapsack
+
+:::note
+0-1 Knapsack: Dada una entrada de un conjunto de n items que NO pueden ser partidos, el item $i$ tiene peso $w_i$ y valor $v_i$, y un maximo peso permitido $W$ (el peso que puede cargar la mochila).
+
+QUESTION: seleccionar un conjunto de items $S$ que maximiza el valor.
+:::
+
+#### Paso 1: subproblemas
+
+Sea la entrada: $(w_{1}, ..., w_n), (v_{1}, ..., v_n), W$
+
+Si $S \subseteq \{1, ..., n\}$ es una solución óptima al problema, entonces el beneficio óptimo es $\sum_{i \in S} v_i$
+
+Para el ultimo item del conjunto, distinguimos dos casos:
+- $n \notin S$, entonces $S$ es una solución óptima al problema $(w_{1}, ..., w_{n-1}), (v_{1}, ..., v_{n-1}), W$
+- $n \in S$, entonces $S - \{n\}$ es una solución óptima al problema $(w_{1}, ..., w_{n-1}), (v_{1}, ..., v_{n-1}), W - w_n$
+
+En ambos casos obtenemos una solución óptima de un subproblema que no tiene el último elemento, y donde el peso maximo puede ser $W$ o un valor mas pequeño.
+
+Ahora podemos identificar subproblemas de la forma $[i,x]$ que son mochilas donde el conjunto de items es $\{1, ..., i\}$ y el peso máximo que soporta la mochila es $x$.
+
+#### Paso 2: recurrencia
+
+Sea $v[i,x]$ el valor óptimo que obtenemos de los items $\{1,2,...,i\}$ dentro del peso total $\le x$.
+
+Calculamos $v[i,x]$ con las dos posibilidades recursivamente:
+
+$$
+v[i,x] =
+\begin{cases}
+0, & \text{si } i=0 \text{ o } x=0,\\
+v[i-1,x], & \text{si } w_i>x,\\
+\max\{v[i-1,x],\, v_i+v[i-1,x-w_i]\}, & \text{si } w_i\le x.
+\end{cases}
+$$
+
+#### Paso 3: definir algoritmo con tabulación
+
+Usaremos una tabla $P[n+1, W+1]$ (el tamaño de la tabla es de n+1 filas y W+1 columnas) donde guardaremos los valores óptimos para los subproblemas correspondientes.
+
+```text
+Knapsack(w[1..n], v[1..n], W)
+n = longitud(w)
+for i = 0 to n do
+    P[i,0] = 0  // con capacidad 0 no cabe ningun objeto
+for x = 1 to W do
+    P[0,x] = 0  // sin objetos disponibles, el valor es 0
+for i = 1 to n do   // añade los objetos uno por uno
+    for x = 1 to W do   // calcula el optimo para cada capacidad
+        P[i,x] = max{P[i-1,x], P[i-1, x-w[i]] + v[i]}   // compara incluir el objeto o no
+
+return P[n,W]   // cuando la tabla esta llena, devuelve el optimo para n, W
+```
+
+#### Paso 4: recuperar la solución
+
+Ahora sabemos el valor óptimo que podemos obtener para n objetos con una mochila de capacidad W, sin embargo, el problema nos pide los items que queremos llevar, no el valor sumado de esos items. Por lo tanto modificamos el algoritmo para computar también los items que nos llevamos.
+
+Una posible forma es utilizar una tabla de Booleans $K[n+1, W+1]$, donde $K[i,x]$ es 1 si el máximo valor es obtenido en la alternativa $i \in S$, sino 0.
+
+```text
+Knapsack(w[1..n], v[1..n], W)
+...
+for i = 1 to n do
+    for x = 1 to W do
+        if w[i] > x then
+            P[i,x] = P[i-1,x];
+            K[i,x] = 0;
+        else if P[i-1,x] >= P[i-1,x-w[i]] + v[i] then
+            P[i,x] = P[i-1,x];
+            K[i,x] = 0;
+        else
+            P[i,x] = P[i-1,x-w[i]] + v[i];
+            K[i,x] = 1;
+
+return P[n,W]
+```
+
+Ahora, reconstruimos el subconjunto de items usando $K$:
+
+```text
+x = W, S = {}   // x=W contiene los items optimos para el peso W
+for i = n downto 1 do
+    if K[i,x] = 1 then
+        S.append(i);
+        x = x - w[i];
+return S
+```
+
+#### Paso 5: análisis del coste
+
+El problema $\text{0-1 Knapsack}$ es NP-completo.
+
+La tabla P tiene un tamaño de `n x W` celdas y cada celda se visita una vez en el algoritmo (ignorando que celdas anteriores se visiten para calcular la actual, ya que esa consulta tiene coste O(1)), por lo tanto, rellenar esta tabla tiene coste O(nW). La tabla K tambien se rellena mientras se rellena P, por lo que no tiene coste adicional, y el coste de reconstruir la solución al final es O(n).
+
+Por lo tanto, el coste final es O(nW).
+
+El coste del algoritmo es pseudopolinómico, porque si W requiere de k bits para representarlo, el coste y espacio del algoritmo es $n2^k$, exponencial para el tamaño de W.
+
+#### Visualizador:
+
+import KnapsackWidget from '../../../../components/algorithms/knapsackWidget.jsx';
+
+<KnapsackWidget
+  weights={[2, 3, 4]}
+  values={[4, 5, 7]}
+  W={5}
+  client:visible
+/>

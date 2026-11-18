@@ -1,6 +1,7 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
+import mdx from '@astrojs/mdx';
 
 import react from '@astrojs/react';
 import remarkMath from 'remark-math';
@@ -19,7 +20,7 @@ export default defineConfig({
                 Hero: './src/components/HomeHero.astro',
             },
             social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/paufranch' }],
-		}), react()],
+		}), react(), mdx()],
     
     markdown: {
         remarkPlugins: [remarkMath],
