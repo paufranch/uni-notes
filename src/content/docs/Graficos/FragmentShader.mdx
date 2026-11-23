@@ -1,0 +1,23 @@
+---
+title: Fragment Shader
+description: Test basico de Fragment Shader
+tableOfContents: false
+---
+
+import ShaderCanvas from '../../../components/ShaderCanvas.jsx';
+
+export const miFragmentShader = `
+  uniform float uTime;
+  varying vec2 vtexCoord;
+
+  void main() {
+    vec3 color = 0.5 + 0.5 * cos(uTime + vtexCoord.xyx + vec3(0.0, 2.0, 4.0));
+    gl_FragColor = vec4(color, 1.0);
+  }
+`;
+
+# Gradiente animado en GLSL
+
+El siguiente ejemplo interpola las coordenadas UV (`vUv`) junto con `uTime`:
+
+<ShaderCanvas client:only="react" fragmentShader={miFragmentShader} />

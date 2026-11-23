@@ -227,3 +227,130 @@ article.card {
     --sl-content-margin-inline: auto;
   }
 }
+
+.shader-window {
+  overflow: hidden;
+  border: 1px solid var(--sl-color-gray-5);
+  border-radius: 12px;
+  background: var(--sl-color-gray-6);
+  box-shadow: var(--sl-shadow-lg);
+  transition: border-color 160ms ease;
+}
+
+.shader-window:hover {
+  border-color: var(--sl-color-accent);
+}
+
+.shader-window_body {
+  display: grid;
+  grid-template-columns: minmax(16rem, 0.8fr) 1.2fr;
+  height: var(--shader-height);
+}
+
+.shader-window_toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.65rem 1rem;
+  border-bottom: 1px solid var(--sl-color-gray-5);
+  color: var(--sl-color-text);
+  font-size: var(--sl-text-sm);
+}
+
+.shader-window_toolbar span {
+  color: var(--sl-color-text-accent);
+}
+
+.shader-window_viewport {
+  background-color: var(--sl-color-gray-6);
+  background-image: radial-gradient(
+    circle,
+    var(--sl-color-gray-4) 0.8px,
+    transparent 1px
+  );
+  background-size: 12px 12px;
+  min-width: 0;
+  height: 100%;
+  overflow: hidden;
+  cursor: grab;
+}
+
+.shader-code-panel {
+  min-width: 0;
+  overflow: hidden;
+  border-right: 1px solid var(--sl-color-gray-5);
+  background: var(--sl-color-black);
+}
+
+.shader-code-tabs {
+  display: flex;
+  align-items: stretch;
+  height: 2.5rem;
+}
+
+.shader-code-tabs button {
+  min-width: 0;
+  height: 100%;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--sl-color-gray-2);
+  cursor: pointer;
+}
+
+.shader-code-tabs button[aria-selected='true'] {
+  background: var(--sl-color-accent-low);
+  color: var(--sl-color-text-accent);
+  box-shadow: inset 0 -2px var(--sl-color-accent);
+}
+
+/*.shader-code-tabs > button {
+  min-width: 0;
+  height: 100%;
+  margin: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--sl-color-gray-2);
+  align-self: stretch;
+  box-sizing: border-box;
+  white-space: nowrap;
+}*/
+
+.shader-code {
+  height: calc(100% - 2.5rem);
+  margin: 0;
+  padding: 1rem;
+  overflow: auto;
+  background: transparent;
+  color: var(--sl-color-gray-2);
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+.shader-code code {
+  white-space: pre;
+}
+
+.shader-window_viewport:active {
+  cursor: grabbing;
+}
+
+@media (max-width: 50rem) {
+  .shader-window__body {
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(12rem, 0.8fr) 1.2fr;
+    height: auto;
+  }
+
+  .shader-code-panel {
+    height: 12rem;
+    border-right: none;
+    border-bottom: 1px solid var(--sl-color-gray-5);
+  }
+
+  .shader-window_viewport {
+    height: var(--shader-height);
+  }
+}
