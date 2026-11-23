@@ -43,10 +43,10 @@ export default function AlgorithmPlayer({ algorithm, initialData, renderer })
             </p>
 
             <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center' }}>
-                <button onClick={() => { setPlaying(false); setIndex(0); }}>⏪️ Reiniciar</button>
-                <button onClick={() => { setPlaying(false); setIndex((i) => Math.max(0, i-1)); }}>⏮️ Anterior</button>
-                <button onClick={() => setPlaying(!playing)}>{playing ? '⏸️ Pausar' : '▶️ Reproducir'}</button>
-                <button onClick={() => { setPlaying(false); setIndex((i) => Math.min(steps.length-1, i+1))}}>Siguiente ⏭️</button>
+                <button type="button" className="player-button" onClick={() => { setPlaying(false); setIndex(0); }}>⏪️ Reiniciar</button>
+                <button type="button" className="player-button" onClick={() => { setPlaying(false); setIndex((i) => Math.max(0, i-1)); }}>⏮️ Anterior</button>
+                <button type="button" className="player-button" onClick={() => setPlaying(!playing)}>{playing ? '⏸️ Pausar' : '▶️ Reproducir'}</button>
+                <button type="button" className="player-button" onClick={() => { setPlaying(false); setIndex((i) => Math.min(steps.length-1, i+1))}}>Siguiente ⏭️</button>
             </div>
         </div>
     );

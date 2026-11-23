@@ -337,6 +337,53 @@ article.card {
   cursor: grabbing;
 }
 
+.player-button {
+	/* Inherit site vibe */
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 500;
+  
+  /* Layout & Spacing */
+  /* margin: 0 SUPER IMPORTANTE!! SINO LA ALTURA DE LOS BOTONES FALLA!! */
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  box-sizing: border-box;
+  padding: 0.6rem 1.2rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  white-space: nowrap;
+
+  /* Theme-aware colors */
+  background-color: var(--sl-color-bg);
+  color: var(--sl-color-text);
+  border: 3px solid var(--sl-color-gray-4);
+  border-radius: 2px;
+  box-shadow: 0 4px 0 var(--sl-color-gray-4);
+  transition: background-color 0.15s ease, transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.player-button:hover {
+  transform: scaleY(1.05);
+  transform-origin: bottom;
+}
+
+.player-button:active {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 var(--sl-color-gray-4);
+}
+
+.player-button:focus-visible {
+  outline: 2px solid var(--sl-color-accent);
+  outline-offset: 3px;
+}
+
+.site-btn:hover {
+  background-color: var(--sl-color-accent);
+}
+
 @media (max-width: 50rem) {
   .shader-window__body {
     grid-template-columns: 1fr;
