@@ -14,6 +14,8 @@ La programación dinámica es una técnica para resolver problemas dividiéndolo
 
 ### Ejemplo 01: 0-1 Knapsack
 
+El problema $\text{0-1 Knapsack}$ consiste en determinar que objetos coger, sabiendo su valor, para llenar una mochila con una determinada capacidad de peso, tal que consigamos llevar el maximo valor.
+
 :::note
 0-1 Knapsack: Dada una entrada de un conjunto de n items que NO pueden ser partidos, el item $i$ tiene peso $w_i$ y valor $v_i$, y un maximo peso permitido $W$ (el peso que puede cargar la mochila).
 
@@ -120,5 +122,87 @@ import KnapsackWidget from '../../../../components/algorithms/knapsackWidget.jsx
   weights={[2, 3, 4]}
   values={[4, 5, 7]}
   W={5}
+  client:visible
+/>
+
+### Ejemplo 02: Longest Common Substring
+
+El problema de la subcadena común mas larga consiste en encontrar entre dos secuencias de carácteres la subsecuencia común más larga que aparece en ambas secuencias.
+
+:::note
+**LCSt:** Dados dos strings $X = x_1 ... x_n$ y $Y = y_1 ... y_m$, computar su **longest common substring** $Z$, es decir, la $k$ más grande para cual hay indices $i$ y $j$ con
+
+$x_ix_{i+1}...x_{i+k} = y_jy_{j+1}...y_{j+k}$
+
+Por ejemplo:
+
+X: D**EA**DB**BEEF**<br />
+Y: **EA**T**BEEF**<br />
+Z: BEEF **tomamos la subsecuencia mas larga comun**
+:::
+
+#### Paso 1: subproblemas
+
+Sean $X = x_1 ... x_n$ y $Y = y_1 ... y_m$ dos `strings` y $Z$ su `substring` comun mas largo. Se cumple:
+- $Z = x_ix_{i+1}...x_{i+k} = y_jy_{j+1}...y_{j+k}$
+- $Z$ es el sufijo comun mas largo de `X(i+k)` y `Y(j+k)`
+
+Podemos considerar los subproblemas `LCStf(i,j)` como computar el sufijo comun mas largo de `X(i)` y `Y(j)`.<br />
+Entonces `LCSf(X,Y)` es el mas largo de los sufijos comunes.
+
+#### Paso 2: recurrencia
+
+- $X[i] = x_1 ... x_i$, para $0 \le i \le n$
+- $Y[j] = y_1 ... y_j$, para $0 \le j \le m$
+- $s[i,j] = $ el tamaño de el **longest common suffix** de $X[i]$ y $Y[j]$
+- Queremos $s[i,j]$ para el maximo i, j posibles.
+
+Definimos la recurrencia:
+
+$$
+s[i,j] =
+\begin{cases}
+0, & \text{si } i=0 \text{ o } j=0,\\
+0, & \text{si } x_i \ne y_j,\\
+s[i-1,j-1] + 1, & \text{si } x_i = y_j.
+\end{cases}
+$$
+
+#### Paso 3: definir algoritmo por tabulación
+
+Usamos una tabla para guardar los valores de los subproblemas iterativamente.
+
+```text
+LCSf(X,Y)
+for i = 0 to n do
+    s[i,0] = 0      // Caso base: Y está vacío
+for j = 1 to m do
+    s[0,j] = 0      // Caso base: X está vacío
+for i = 1 to n do
+    for j = 1 to m do
+        s[i,j] = 0      // Si no coinciden, el sufijo común mide 0
+        if xi = xj then
+            s[i,j] = s[i-1,j-1] + 1   // Extiende el sufijo común anterior
+```
+
+#### Paso 4: análisis del coste
+
+El coste del algoritmo anterior es O(nm) ya que el coste mas grande esta en el bucle anidado, que
+se ejecuta `n*m` veces.
+
+#### Paso 5: recuperar la solución
+
+Para obtener la longitud de la subcadena común más larga, hay que buscar el máximo de toda la tabla `s[i,j]`, lo que tiene un coste O(nm).
+
+También podemos recuperar el texto guardando la posición `(i,j)` donde está el máximo y, si su valor es `L`, la subcadena es:<br />
+`X[i-L+1, ..., i]` o `Y[j-L+1, ..., i]`
+
+#### Visualizador
+
+import LCSubstringWidget from '../../../../components/algorithms/LCSubstringWidget.jsx';
+
+<LCSubstringWidget
+  X={"HOLA"}
+  Y={"OLAF"}
   client:visible
 />

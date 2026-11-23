@@ -15,6 +15,8 @@ export function* knapsack({ weights, values, W })
 
     for(let i = 1; i <= W; i++)
         P[0][i] = 0;
+    for(let i = 1; i <= n; i++)
+        P[i][0] = 0;
     const snapshot = () => P.map((row) => row.slice());
 
     yield {

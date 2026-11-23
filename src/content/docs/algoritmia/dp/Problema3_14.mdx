@@ -1,0 +1,163 @@
+---
+title: Problema 3_14
+description: Problema de programacion dinamica.
+tableOfContents: false
+---
+
+### Cortando una barra de acero
+
+El problema consiste en cortar una barra de acero de longitud $n \in \mathbb{Z^+}$ tal que al vender todos los trozos se obtiene el maximo beneficio. 
+Los cortes tienen que ser en longitudes enteras, por lo tanto, definimos
+$i \in \mathbb{Z^+}$ donde $1 \le i \le n$ como un trozo cortado de la barra original con longitud $i$ que produce un beneficio de venta $p_i$.<br />
+Ademas, sabemos que el coste de hacer un corte es nulo, y tenemos libertad absoluta para hacer cualquier cantidad de cortes entre $0$ y $n-1$.
+Tambien remarcamos que el orden de los cortes importa, es decir, se consideran soluciones distintas cortar un trozo k y otro j respecto a cortar un trozo j y otro k, siempre que k ≠ j, aunque su valor total sea el mismo.
+
+Para resolver el problema, dispondremos de la longitud de la barra inicial ($n$), y de una lista $P$ de tamaño $n$ donde $P[i] = p_i$, es decir,
+almacena el valor de venta de un trozo de longitud $i$.
+
+### a) De cuantas formas diferentes se puede cortar una barra de longitud $n$?
+
+Como la barra es de longitud $n$ y los cortes solo pueden ser en longitudes enteras, tenemos en total $n-1$ posibles posiciones intermedias donde cortar, puesto
+que no tiene sentido cortar en los extremos, solo en las posiciones intermedias.
+
+Para cada una de estas $1 \le i \le n-1$ posiciones donde cortar, tenemos dos posibilidades, o bien cortar o no cortar. Por lo tanto, podemos modelar
+cada posible corte con un numero binario:
+
+$b_1b_2...b_\text{n-1}$ donde $b_i = \begin{cases} 0 = \text{ no cortar}\\1 = \text{ cortar} \end{cases}$
+
+<svg viewBox="0 0 250 70" role="img" aria-labelledby="barra-title" color="var(--sl-color-text)">
+  <rect x="25" y="30" width="50" height="20" rx="10" fill="#d1d5db" stroke="#666"/>
+  <circle cx="35" cy="40" r="10" fill="#a0a4a9" stroke="#666"/>
+  <rect x="150" y="30" width="50" height="20" rx="10" fill="#d1d5db" stroke="#666"/>
+  <circle cx="160" cy="40" r="10" fill="#a0a4a9" stroke="#666"/>
+  <rect x="100" y="30" width="50" height="20" rx="10" fill="#d1d5db" stroke="#666"/>
+  <rect x="75" y="30" width="50" height="20" rx="10" fill="#d1d5db" stroke="#666"/>
+  <circle cx="85" cy="40" r="10" fill="#a0a4a9" stroke="#666"/>
+  <text x="75" y="20" text-anchor="middle" fill="currentColor">1</text>
+  <text x="115" y="20" text-anchor="middle" fill="currentColor">0</text>
+  <text x="150" y="20" text-anchor="middle" fill="currentColor">1</text>
+</svg>
+
+Como los cortes deben seguir un orden distintivo (es decir, se considera distinto un trozo de longitud k y otro de longitud j que uno de longitud j seguido de otro de longitud k), entonces
+efectivamente existe una codificacion binaria para cada posible corte.
+
+Enumerar la cantidad de numeros binarios con $n-1$ bits es equivalente a $2^\text{n-1}$, por lo tanto,
+hay<br /> $2^\text{n-1}$ posibles formas distintas de cortar una barra de longitud $n$.
+
+### b) Diseñar un algoritmo, lo mas eficiente posible, para decidir como cortar una barra de acero de longitud n en trozos, de manera que se maximize la ganancia total que se obtiene. 
+### Vuestro algoritmo tiene que decir cuantos cortes se tienen que hacer en total y donde.
+
+- ENTRADA: $n \in \mathbb{Z^+}$, representa la longitud total de la barra; $P[1..n]$, lista donde el elemento $P[i] \in \mathbb{Q^+}$ contiene el precio de venta de una barra de longitud $i$.
+- SALIDA: $C$, una lista que contiene las posiciones de corte ordenadas tal que $C[k] \in \{1,...,n-1\}$ y maximizan el valor total obtenido al vender, siendo todas las posiciones distintas; $c \in \mathbb{N}$, la cantidad de cortes a hacer.
+
+#### Paso 1: Subestructura optima
+
+Supongamos que descomponemos la barra original a una barra de longitud $i \in \{1,...,n\}$, sin cortes, y una barra de longitud $n-i$, que puede estar cortada, y que nos da el beneficio total optimo.
+Con el trozo de longitud $i$ obtendremos un beneficio $p_i$, y con el trozo restante, un beneficio $B$ que depende de como este cortado ese trozo. El beneficio total es $R(n) = p_i + B$.
+
+Si la barra de longitud $n-i$ no estuviera cortada de manera optima, entonces existiria un beneficio posible de obtener por ese trozo, $B' \gt B$, por lo que
+el beneficio total seria $p_i + B' \gt p_i + B$, por lo que concluimos que la solucion contiene una subestructura optima tal que $B = R(n-i)$.
+
+#### Paso 2: Recurrencia y subproblemas
+
+Para el caso base identificamos una barra de longitud 0, en ese caso, el beneficio que esperamos obtener es logicamente 0.
+
+En cualquier otro caso, para una barra de longitud generica $j \in \{1,...,n\}$, el beneficio maximo se calcularia encontrando el
+valor intermedio $i$ que maximiza $p_i + R(j-i)$.
+
+Por lo tanto la recurrencia es:
+$$
+R(j) =
+\begin{cases}
+0, & \text{si } j=0\\
+\max_{1 \le i \le j} \{ p_i + R(j-i) \} & \text{si } j > 0\\
+\end{cases}
+$$
+
+#### Paso 3: Implementacion
+
+Utilizaremos un vector $R$ de tamaño $n+1$ para guardar el beneficio obtenido segun la recurrencia. $R[n]$ nos devolvera, entonces, el beneficio maximo.
+
+```text
+cortarBarra(n, P):
+R = nueva lista [0..n];
+R[0] = 0;   // caso base longitud 0
+
+for j = 1 to n:
+    q = -infinity;
+    // encontrar i que maximiza q guardando el valor de
+    // cortes menores en R
+    for i = 1 to j:
+        if P[i] + R[j-i] > q:
+            q = P[i] + R[j-i];
+    R[j] = q;
+
+return R[n];
+```
+
+`R[0]` es el caso base y es correcto. Por hipotesis de induccion, suponemos que todos los valores en `R[j-i]` ya son optimos porque $j-i \lt j$, asi que para el caso `R[j]`,
+guardamos el valor maximo obtenido para alguna $i \in \{1,...,j\}$, mas el mejor valor optimo `R[j-i]`, por lo que sigue siendo optimo.
+
+#### Paso 4: Reconstruir solucion
+
+Para reconstruir la solucion sera necesario guardar donde hemos hecho los cortes para obtener el beneficio maximo en el subproblema.
+Por lo tanto, definimos el vector $S$ de tamaño $n+1$ donde $S[j] = \text{ longitud del primer trozo fijado i}$.
+
+Luego, la longitud optima de cada subproblema va reconstruyendo la solucion global.
+
+```text
+cortarBarra(n, P):
+R = nueva lista [0..n];
+S = nueva lista [0..n];
+R[0] = 0;   // caso base longitud 0
+
+for j = 1 to n:
+    q = -infinity;
+    for i = 1 to j:
+        if P[i] + R[j-i] > q:
+            q = P[i] + R[j-i];
+            S[j] = i;
+    R[j] = q;
+
+C = [];
+r = n;
+p = 0;
+
+while r > 0:
+    c = S[r];
+    r = r - c;
+
+    if r > 0:   // solo seguimos mirando si queda barra
+        p += c;
+        C.append(p);
+
+return C, length(C);
+```
+
+`S[j]` guarda la longitud del primer trozo fijado (longitud $i$) de una solucion optima, que siempre es mayor o igual que 1.
+En cada paso del `while`, `r` se decrementa, por lo que el bucle termina siempre, y va recortando de la barra original la longitud de un trozo optimo.
+Asi que al terminar el bucle, hemos contado todos los cortes siempre que `r > 0`, evitando añadir un corte de la barra cuando ya no queda barra para cortar.
+
+#### Paso 5: Coste
+
+En el algoritmo primero se inicializan dos listas de tamaño $n+1$, el coste de esa operacion es $\Theta(n)$. Para reconstruir la solucion,
+en el peor de los casos, `r` se decrementa de uno en uno y el bucle se ejecuta $n$ veces, con operaciones de coste constante, por lo que su coste es $O(n)$.
+
+La parte mas pesada en calculo del algoritmo, entonces, es el doble bucle. Su cantidad de iteraciones representa la secuencia:
+
+$$\sum_{i=1}^{n} i = 1 + 2 + ... + n = \dfrac{n(n+1)}{2}$$
+
+Por lo tanto su coste temporal es $\Theta(n^2)$. Y su coste en espacio, al ser `R` y `S` listas de tamaño $n+1$, y `C` de tamaño como mucho $n-1$ es $\Theta(n)$.
+
+El algoritmo propuesto utiliza tabulacion con un enfoque bottom-up para reducir las $2^{n-1}$ posibilidades calculadas en el primer apartado
+a una evaluacion de $\Theta(n^2)$ decisiones.
+
+#### Visualizador
+
+import CutBarWidget from '../../../../components/algorithms/optimalBarWidget.jsx';
+
+<CutBarWidget
+    n={4}
+    P={[3, 2, 3, 5]}
+    client:visible
+/>

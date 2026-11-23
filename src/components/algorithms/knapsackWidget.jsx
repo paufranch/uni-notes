@@ -55,20 +55,7 @@ function renderKnapsack(state, weights, values, W)
                     <tbody>
                         <tr>
                             <th scope="row">Pesos</th>
-                            {weights.map((weight, i) => {
-                                const isActive = state.active?.i === i + 1;
-                                return (
-                                <td 
-                                    key={i}>
-                                    style={{
-                                        border: '1px solid var(--sl-color-hairline)',
-                                        padding: '0.25rem 0.5rem',
-                                        textAlign: 'center',
-                                        backgroundColor: isActive
-                                            ? 'var(--sl-color-accent-low)'
-                                            : undefined,
-                                    }}
-                                    {weight}</td>);})}
+                            {weights.map((value, i) => <td key={i}>{value}</td>)}
                         </tr>
                         <tr>
                             <th scope="row">Valores</th>
