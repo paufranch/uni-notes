@@ -7,7 +7,8 @@ const { title = data.title, tagline, actions = [] } = data.hero || {};
 
 <section class="home-window" aria-labelledby="_top">
   <div class="home-copy">
-    <h1 data-page-title>{title}</h1>
+    <h1 data-page-title={title}>{title}</h1>
+    <h2>{tagline}</h2>
   </div>
 
   <div class="home-visual" aria-hidden="true">
@@ -17,9 +18,9 @@ const { title = data.title, tagline, actions = [] } = data.hero || {};
 </section>
 
 <script>
-  const heading = document.querySelector<HTMLHeadingElement>('.home-copy h1');
+  const headings = document.querySelectorAll<HTMLHeadingElement>('.home-copy h1, .home-copy h2');
 
-  if (heading) {
+  headings.forEach((heading) => {
     const characters = Array.from(heading.textContent ?? '');
     const lowercaseLetters = characters
       .map((character, index) => ({ character, index }))
@@ -47,7 +48,7 @@ const { title = data.title, tagline, actions = [] } = data.hero || {};
     }
 
     window.setTimeout(flicker, randomDelay(100, 450));
-  }
+  });
 </script>
 
 <style>
@@ -77,6 +78,16 @@ const { title = data.title, tagline, actions = [] } = data.hero || {};
     font-size: clamp(0.75rem, 3vw, 4rem);
     font-weight: 600;
     line-height: 0.98;
+  }
+
+  .home-copy h2 {
+    display: block;
+    margin: 0.75rem auto 0;
+    color: var(--sl-color-text);
+    font-size: clamp(1rem, 2vw, 2rem);
+    font-weight: 400;
+    line-height: 1.2;
+    text-align: center;
   }
 
   .home-tagline {
