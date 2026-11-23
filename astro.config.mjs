@@ -10,6 +10,7 @@ import rehypeKatex from 'rehype-katex';
 // https://astro.build/config
 export default defineConfig({
     site: 'https://paufranch.github.io',
+    base: '/uni-notes',
     integrations: [
         starlight({
             title: 'Notas de Pau 📘',
