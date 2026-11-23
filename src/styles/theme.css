@@ -401,3 +401,10 @@ article.card {
     height: var(--shader-height);
   }
 }
+
+/* Textos estilo robot prototipo sci-fi etc. */
+.proto-style {
+    color: var(--sl-color-gray-3);
+    font: 700 0.65rem/1.4 'Manrope Variable', sans-serif;
+    letter-spacing: 0.1em;
+}

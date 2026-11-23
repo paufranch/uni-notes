@@ -49,8 +49,8 @@ export default function ShaderCanvas({ vertexShader, fragmentShader, height = '3
     return (
         <div className="shader-window">
             <div className="shader-window_toolbar">
-                <strong>Shader interactivo</strong>
-                <span>↔ Arrastra para rotar</span>
+                <text className="proto-style">INTERACTIVE 3D WIDGET</text>
+                <span className="proto-style">↔ Arrastra para rotar</span>
             </div>
 
             <div className="shader-window_body" style={{ '--shader-height': height }}>
