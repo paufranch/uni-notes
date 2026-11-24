@@ -306,18 +306,6 @@ article.card {
   box-shadow: inset 0 -2px var(--sl-color-accent);
 }
 
-/*.shader-code-tabs > button {
-  min-width: 0;
-  height: 100%;
-  margin: 0;
-  border-radius: 0;
-  background: transparent;
-  color: var(--sl-color-gray-2);
-  align-self: stretch;
-  box-sizing: border-box;
-  white-space: nowrap;
-}*/
-
 .shader-code {
   height: calc(100% - 2.5rem);
   margin: 0;
@@ -344,8 +332,7 @@ article.card {
   font-weight: 500;
   
   /* Layout & Spacing */
-  /* margin: 0 SUPER IMPORTANTE!! SINO LA ALTURA DE LOS BOTONES FALLA!! */
-  margin: 0;
+  margin: 0; /* margin: 0 SUPER IMPORTANTE!! SINO LA ALTURA DE LOS BOTONES FALLA!! */
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -378,6 +365,25 @@ article.card {
 .player-button:focus-visible {
   outline: 2px solid var(--sl-color-accent);
   outline-offset: 3px;
+}
+
+.player-button_short {
+  display: none;
+}
+
+@media (max-width: 50rem) {
+  .player-button_long {
+    display: none;
+  }
+
+  .player-button_short {
+    display: inline;
+  }
+
+  .player-button {
+    padding: 0.4rem 0.65rem;
+    font-size: 0.8rem;
+  }
 }
 
 .site-btn:hover {
