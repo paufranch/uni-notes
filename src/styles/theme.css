@@ -371,7 +371,7 @@ article.card {
   display: none;
 }
 
-@media (max-width: 50rem) {
+@media (max-width: 60rem) {
   .player-button_long {
     display: none;
   }

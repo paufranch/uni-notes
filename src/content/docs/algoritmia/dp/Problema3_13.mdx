@@ -1,0 +1,101 @@
+---
+title: Problema 3_13
+description: Problema de programacion dinamica.
+tableOfContents: false
+---
+
+### Caminos mas largos en DAGs
+
+El problema consiste en encontrar el camino que no repite nodos desde un nodo inicial $s$
+hasta todos los demas nodos de G, tal que la distancia total de los caminos sea maxima. Es decir,
+sea $G = (V,E,\omega)$ donde $\omega : E \to \mathbb{Z^+}$ i $s \in V$ el nodo inicial, encontrar
+el camino $C = \{\forall u \in V | s \to u\}$ donde todos los nodos del camino aparecen una sola vez, y
+$\sum_{(u,v) \in C} \omega(u,v)$ es maximo. Ademas, sabemos que $G$ es un grafo dirigido y aciclico (DAG).
+
+El problema requiere que la solucion tenga un coste temporal $O(n+m)$.
+
+- ENTRADA: $s \in V$ es el nodo inicial.
+$G = (V,E,\omega)$ es el DAG.
+
+- SALIDA: $S$ una lista a partir de la cual reconstruir los caminos optimos.
+
+#### Paso 1: Subestructura optima
+
+Supongamos un camino de $s$ a un nodo cualquiera del grafo $u$, queremos que este camino sea
+optimo maximizando la distancia total. Este camino simple $C = s \to u$ supongamos que esta formado
+por una subestructura tal que $C = (s \to ... \to v) \to u$. Donde $C_1 = s \to ... \to v$ y 
+$D = \sum_{(x,y) \in C_1} \omega(x,y)$. Supongamos que el camino $C_1$ no es optimo. Entonces,
+existe otro camino $C_2 = s \to ... \to v$ tal que si $D' = \sum_{(x,y) \in C_2} \omega(x,y)$, se cumple
+$D \lt D'$. En ese caso, podriamos substituir $C_1$ por $C_2$ y seguiriamos obteniendo un camino simple
+$C = (s \to ... \to v) \to u$ pero ahora $\omega(v,u) + D \lt \omega(v,u) + D'$ que ademas tambien seria
+un camino simple (no repite nodos). Podemos saber con certeza que cualquier camino $s \to u$ seria un
+camino simple por propiedad de los DAGs, ya que al no tener ciclos, es imposible que el camino vuelva
+a incluir un nodo que ya estaba en el camino.
+
+#### Paso 2: Recurrencia
+
+Definamos una recurrencia para optimizar la distancia y que sea maxima. Logicamente, la distancia
+de el nodo $s$ a si mismo es 0. Ese seria el caso base, por lo tanto $D[s] = 0$. En cualquier otro
+caso, la distancia optima para el camino de $s$ a un nodo cualquiera $v$ seria el maximo de distancia
+encontrada con un nodo anterior $D[u]$ mas el peso de la arista $(u,v)$. La recurrencia completa queda asi:
+
+$$
+D(v) =
+\begin{cases}
+0, & \text{si } v=s\\
+\max_{(u,v) \in E} \{ D(u) + \omega(u,v) \} & v \ne s\\
+\end{cases}
+$$
+
+#### Paso 3: Implementacion
+
+Para obtener el camino optimo desde $s$ hasta cualquier nodo $u$, rellenaremos la lista $D$ con el valor
+de la recurrencia hasta haber visitado todos los nodos alcanzables desde $s$.
+
+Naturalmente, la tabla de la recurrencia debe rellenarse desde $s$ siguiendo los caminos disponibles
+desde $s$, es decir, a partir de la ordenacion topologica de la componente conexa de $s$.
+
+Para ello, haremos primero una ordenacion topologica y luego recorreremos ese orden, lo que garantiza que
+cada arista visitada apunta del nodo origen al nodo destino.
+
+Por ultimo, necesitaremos una forma de reconstruir los caminos maximos hasta los vertices, para ese fin
+utilizamos otra lista que rellenaremos con el nodo que ha hecho mejorar $D[v]$ en la recurrencia,
+asi $S[v]$ contendra el nodo antecesor en el camino maximo, y recorrerla al reves nos dara el camino.
+
+```text
+DFSr(s, G, l, v):
+    v[s] = 1;
+    for u in G[s]:
+        if v[u] == 0:
+            DFSr(u, G, l, v);
+    l.push(s);
+
+ordenacionTopologicaDFS(s, G):
+    n = G.V.size();
+    l = [];
+    v = [1...n];
+    for i = 1 to n:
+        v[i] = 0
+
+    DFSr(s, G, l, v);
+    l.push(s);
+    return l.reverse();
+
+caminosMaximos(s, G):
+    n = G.V.size();
+    D = [1..n];
+    S = [1..n];
+    for i = 1 to n:
+        D[i] = 0;      // caso base
+        S[i] = null;
+
+    O = ordenacionTopologicaDFS(s, G);
+
+    for u in O:
+        for v in G[u]:
+            if D[u] + v.w > D[v]:
+                D[v] = D[u] + v.w;
+                S[v] = u;
+    
+    return S;
+```
